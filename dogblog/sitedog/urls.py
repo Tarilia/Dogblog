@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
     path('', views.index),
-    path('cats/', views.categories),
+    path('cats/<int:cats_id>/', views.categories),
+    path('cats/<slug:cats_slug>/', views.categories_by_slug),
 ]
