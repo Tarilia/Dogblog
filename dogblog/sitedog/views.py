@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 
 
 def index(request):
-    return HttpResponse('<h1>Страница приложения</h1>')
+    return render(request, 'sitedog/index.html')
 
 
 def categories(request):
