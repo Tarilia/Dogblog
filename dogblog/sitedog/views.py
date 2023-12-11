@@ -6,6 +6,10 @@ def index(request):
     return render(request, 'sitedog/index.html')
 
 
+def about(request):
+    return render(request, 'sitedog/about.html')
+
+
 def categories(request):
     return HttpResponse('<h1>Статьи по категориям</h1>')
 
