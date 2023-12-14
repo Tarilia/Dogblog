@@ -22,7 +22,7 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'sitedog/about.html', context={'title': 'О сайте',})
+    return render(request, 'sitedog/about.html', context={'title': 'О сайте', 'menu': menu, })
 
 
 def show_post(request, post_id):
