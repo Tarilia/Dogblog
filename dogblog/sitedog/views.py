@@ -16,9 +16,17 @@ data_db = [
 ]
 
 
+cats_db = [
+    {'id': 1, 'name': 'Служебная'},
+    {'id': 2, 'name': 'Охранная'},
+    {'id': 3, 'name': 'Декоративная'},
+]
+
+
 def index(request):
     return render(request, 'sitedog/index.html', context={'title': 'Главная страница',
-                                                          'menu': menu, 'posts': data_db, })
+                                                          'menu': menu, 'posts': data_db,
+                                                           'cat_selected': 0, })
 
 
 def about(request):
@@ -39,6 +47,12 @@ def contact(request):
 
 def login(request):
     return HttpResponse(f'Авторизация')
+
+
+def show_category(request, cat_id):
+    return render(request, 'sitedog/index.html', context={'title': 'Отображение по рубрикам',
+                                                          'menu': menu, 'posts': data_db,
+                                                          'cat_selected': cat_id, })
 
 
 def page_not_found(request, exception):
