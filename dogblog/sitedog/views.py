@@ -25,8 +25,9 @@ cats_db = [
 
 
 def index(request):
+    posts = Sitedog.objects.filter(is_published=1)
     return render(request, 'sitedog/index.html', context={'title': 'Главная страница',
-                                                          'menu': menu, 'posts': data_db,
+                                                          'menu': menu, 'posts': posts,
                                                            'cat_selected': 0, })
 
 
@@ -36,13 +37,8 @@ def about(request):
 
 def show_post(request, post_slug):
     post = get_object_or_404(Sitedog, slug=post_slug)
-    data = {
-        'title': post.title,
-        'menu': menu,
-        'post': post,
-        'cat_selected': 1,
-    }
-    return render(request, 'sitedog/post.html', data)
+    return render(request, 'sitedog/post.html', context={'title': post.title, 'menu': menu,
+                                                         'post': post, 'cat_selected': 1, })
 
 
 def addpage(request):
