@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
 from dogblog.sitedog.models import Sitedog
 
@@ -34,8 +34,8 @@ def about(request):
     return render(request, 'sitedog/about.html', context={'title': 'О сайте', 'menu': menu, })
 
 
-def show_post(request, post_id):
-    post = get_object_or_404(Sitedog, pk=post_id)
+def show_post(request, post_slug):
+    post = get_object_or_404(Sitedog, slug=post_slug)
     data = {
         'title': post.title,
         'menu': menu,
