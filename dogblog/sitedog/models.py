@@ -6,6 +6,7 @@ from django.db import models
 
 class Sitedog(models.Model):
     title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, blank=True, db_index=True, default='exit')
     content = models.TextField(blank=True)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
