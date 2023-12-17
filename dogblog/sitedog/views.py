@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound
+from dogblog.sitedog.models import Sitedog
 
 
 menu = [
@@ -34,7 +35,14 @@ def about(request):
 
 
 def show_post(request, post_id):
-    return HttpResponse(f'Отображение статьи id: {post_id}')
+    post = get_object_or_404(Sitedog, pk=post_id)
+    data = {
+        'title': post.title,
+        'menu': menu,
+        'post': post,
+        'cat_selected': 1,
+    }
+    return render(request, 'sitedog/post.html', data)
 
 
 def addpage(request):
