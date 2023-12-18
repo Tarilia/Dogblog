@@ -25,7 +25,7 @@ cats_db = [
 
 
 def index(request):
-    posts = Sitedog.objects.filter(is_published=1)
+    posts = Sitedog.published.all()
     return render(request, 'sitedog/index.html', context={'title': 'Главная страница',
                                                           'menu': menu, 'posts': posts,
                                                            'cat_selected': 0, })
