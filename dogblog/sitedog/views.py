@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
-from dogblog.sitedog.models import Sitedog, Category
+from dogblog.sitedog.models import Sitedog, Category, TagPost
 
 
 menu = [
@@ -52,6 +52,12 @@ def show_category(request, cat_slug):
     return render(request, 'sitedog/index.html', context={'title': f'Рубрика: {category.name}',
                                                           'menu': menu, 'posts': posts,
                                                           'cat_selected': category.pk, })
+
+def show_tag_postlist(request, tag_slug):
+    tag = get_object_or_404(TagPost, slug=tag_slug)
+    posts = tag.tags.filter(is_published=Sitedog.Status.PUBLISHED)
+    return render(request, 'sitedog/index.html', context={'title': f"Тег: {tag.tag}", 'menu': menu,
+                                                        'posts': posts, 'cat_selected': None, })
 
 
 def page_not_found(request, exception):
