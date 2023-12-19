@@ -1,16 +1,11 @@
 from django import template
-from dogblog.sitedog import views
+from dogblog.sitedog.models import Category
 
 
 register = template.Library()
 
 
-@register.simple_tag()
-def get_categories():
-    return views.cats_db
-
-
 @register.inclusion_tag('sitedog/list_categories.html')
 def show_categories(cat_selected=0):
-    cats = views.cats_db
+    cats = Category.objects.all()
     return {'cats': cats, 'cat_selected': cat_selected}

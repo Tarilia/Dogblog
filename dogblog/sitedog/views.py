@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
-from dogblog.sitedog.models import Sitedog
+from dogblog.sitedog.models import Sitedog, Category
 
 
 menu = [
@@ -14,13 +14,6 @@ data_db = [
     {'id': 1, 'title': 'Кавказская овчарка', 'content': 'Описание породы', 'is_published': True},
     {'id': 2, 'title': 'Немецкий дог', 'content': 'Описание породы', 'is_published': True},
     {'id': 3, 'title': 'Ротвейлер', 'content': 'Описание породы', 'is_published': False},
-]
-
-
-cats_db = [
-    {'id': 1, 'name': 'Служебная'},
-    {'id': 2, 'name': 'Охранная'},
-    {'id': 3, 'name': 'Декоративная'},
 ]
 
 
@@ -53,10 +46,12 @@ def login(request):
     return HttpResponse(f'Авторизация')
 
 
-def show_category(request, cat_id):
-    return render(request, 'sitedog/index.html', context={'title': 'Отображение по рубрикам',
-                                                          'menu': menu, 'posts': data_db,
-                                                          'cat_selected': cat_id, })
+def show_category(request, cat_slug):
+    category = get_object_or_404(Category, slug=cat_slug)
+    posts = Sitedog.published.filter(cat_id=category.pk)
+    return render(request, 'sitedog/index.html', context={'title': f'Рубрика: {category.name}',
+                                                          'menu': menu, 'posts': posts,
+                                                          'cat_selected': category.pk, })
 
 
 def page_not_found(request, exception):
