@@ -27,6 +27,8 @@ class Sitedog(models.Model):
         return self.title
 
     class Meta:
+        verbose_name = "Породы собак"
+        verbose_name_plural = "Породы собак"
         ordering = ['-time_create']
         indexes = [
             models.Index(fields=['-time_create'])
