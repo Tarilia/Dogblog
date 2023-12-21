@@ -10,15 +10,9 @@ menu = [
         {'title': "Войти", 'url_name': 'login'},
 ]
 
-data_db = [
-    {'id': 1, 'title': 'Кавказская овчарка', 'content': 'Описание породы', 'is_published': True},
-    {'id': 2, 'title': 'Немецкий дог', 'content': 'Описание породы', 'is_published': True},
-    {'id': 3, 'title': 'Ротвейлер', 'content': 'Описание породы', 'is_published': False},
-]
-
 
 def index(request):
-    posts = Sitedog.published.all()
+    posts = Sitedog.published.all().select_related('cat')
     return render(request, 'sitedog/index.html', context={'title': 'Главная страница',
                                                           'menu': menu, 'posts': posts,
                                                            'cat_selected': 0, })
@@ -48,14 +42,14 @@ def login(request):
 
 def show_category(request, cat_slug):
     category = get_object_or_404(Category, slug=cat_slug)
-    posts = Sitedog.published.filter(cat_id=category.pk)
+    posts = Sitedog.published.filter(cat_id=category.pk).select_related('cat')
     return render(request, 'sitedog/index.html', context={'title': f'Рубрика: {category.name}',
                                                           'menu': menu, 'posts': posts,
                                                           'cat_selected': category.pk, })
 
 def show_tag_postlist(request, tag_slug):
     tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(is_published=Sitedog.Status.PUBLISHED)
+    posts = tag.tags.filter(is_published=Sitedog.Status.PUBLISHED).select_related('cat')
     return render(request, 'sitedog/index.html', context={'title': f"Тег: {tag.tag}", 'menu': menu,
                                                         'posts': posts, 'cat_selected': None, })
 
