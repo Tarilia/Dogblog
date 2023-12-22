@@ -4,6 +4,12 @@ from .models import Sitedog, Category
 
 @admin.register(Sitedog)
 class SitedogAdmin(admin.ModelAdmin):
+    fields = ['title', 'slug', 'content', 'cat', 'tags']
+    # exclude = ['tags', 'is_published']
+    # readonly_fields = ['slug']
+    prepopulated_fields = {"slug": ("title", )}
+    # filter_horizontal = ['tags']
+    filter_vertical = ['tags']
     list_display = ('title', 'time_create', 'is_published', 'cat', 'brief_info')
     list_display_links = ('title', )
     ordering = ['-time_create', 'title']
