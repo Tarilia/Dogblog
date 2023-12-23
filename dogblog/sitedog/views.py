@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound
 from dogblog.sitedog.models import Sitedog, Category, TagPost
 from .forms import AddPostForm
@@ -33,11 +33,15 @@ def addpage(request):
     if request.method == 'POST':
         form = AddPostForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
+            try:
+                Sitedog.objects.create(**form.cleaned_data)
+                return redirect('index')
+            except:
+                form.add_error(None, "Ошибка добавления поста")
     else:
         form = AddPostForm()
     return render(request, 'sitedog/addpage.html', context={'menu': menu, 'title': 'Добавление статьи',
-                                                          'form': form, })
+                                                            'form': form, })
 
 
 def contact(request):
