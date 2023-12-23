@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
 from dogblog.sitedog.models import Sitedog, Category, TagPost
+from .forms import AddPostForm
 
 
 menu = [
@@ -35,7 +36,7 @@ def addpage(request):
             print(form.cleaned_data)
     else:
         form = AddPostForm()
-    return render(request, 'women/addpage.html', context={'menu': menu, 'title': 'Добавление статьи',
+    return render(request, 'sitedog/addpage.html', context={'menu': menu, 'title': 'Добавление статьи',
                                                           'form': form, })
 
 

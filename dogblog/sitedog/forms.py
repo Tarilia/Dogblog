@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category
+from .models import Category, TagPost
 
 
 class AddPostForm(forms.Form):
@@ -8,3 +8,4 @@ class AddPostForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea(), required=False)
     is_published = forms.BooleanField(required=False)
     cat = forms.ModelChoiceField(queryset=Category.objects.all())
+    tags = forms.ModelChoiceField(queryset=TagPost.objects.all())
