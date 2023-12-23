@@ -29,7 +29,14 @@ def show_post(request, post_slug):
 
 
 def addpage(request):
-    return render(request, 'sitedog/addpage.html', {'menu': menu, 'title': 'Добавление статьи'})
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+    else:
+        form = AddPostForm()
+    return render(request, 'women/addpage.html', context={'menu': menu, 'title': 'Добавление статьи',
+                                                          'form': form, })
 
 
 def contact(request):
