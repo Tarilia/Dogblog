@@ -22,7 +22,7 @@ class AddPostForm(forms.ModelForm):
 
     class Meta:
         model = Sitedog
-        fields = ['title', 'slug', 'content', 'is_published', 'cat', 'tags']
+        fields = ['title', 'slug', 'content', 'photo', 'is_published', 'cat', 'tags']
         widgets = {'title': forms.TextInput(attrs={'class': 'form-input'}),
                    'content': forms.Textarea(attrs={'cols': 50, 'rows': 5}), }
         labels = {'slug': 'URL'}
