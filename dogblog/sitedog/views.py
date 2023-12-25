@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound
 from dogblog.sitedog.models import Sitedog, Category, TagPost, UploadFiles
 from .forms import AddPostForm, UploadFileForm
+from django.views.generic import TemplateView
 
 
 menu = [
@@ -18,6 +19,12 @@ def index(request):
                                                           'menu': menu, 'posts': posts,
                                                            'cat_selected': 0, })
 
+
+class SiteIndex(TemplateView):
+    template_name = 'sitedog/index.html'
+    extra_context = {'title': 'Главная страница',
+                     'menu': menu,
+                     'posts': Sitedog.published.all().select_related('cat'), }
 
 
 def about(request):
