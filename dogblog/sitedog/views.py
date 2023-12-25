@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound
 from dogblog.sitedog.models import Sitedog, Category, TagPost, UploadFiles
 from .forms import AddPostForm, UploadFileForm
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 
 
 menu = [
@@ -13,18 +13,14 @@ menu = [
 ]
 
 
-def index(request):
-    posts = Sitedog.published.all().select_related('cat')
-    return render(request, 'sitedog/index.html', context={'title': 'Главная страница',
-                                                          'menu': menu, 'posts': posts,
-                                                           'cat_selected': 0, })
-
-
-class SiteIndex(TemplateView):
+class SitedogIndex(ListView):
     template_name = 'sitedog/index.html'
+    context_object_name = 'posts'
     extra_context = {'title': 'Главная страница',
-                     'menu': menu,
-                     'posts': Sitedog.published.all().select_related('cat'), }
+                     'menu': menu, 'cat_selected': 0, }
+
+    def get_queryset(self):
+        return Sitedog.published.all().select_related('cat')
 
 
 def about(request):
@@ -65,18 +61,38 @@ def login(request):
     return HttpResponse(f'Авторизация')
 
 
-def show_category(request, cat_slug):
-    category = get_object_or_404(Category, slug=cat_slug)
-    posts = Sitedog.published.filter(cat_id=category.pk).select_related('cat')
-    return render(request, 'sitedog/index.html', context={'title': f'Рубрика: {category.name}',
-                                                          'menu': menu, 'posts': posts,
-                                                          'cat_selected': category.pk, })
+class SitedogCategory(ListView):
+    template_name = 'sitedog/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
 
-def show_tag_postlist(request, tag_slug):
-    tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(is_published=Sitedog.Status.PUBLISHED).select_related('cat')
-    return render(request, 'sitedog/index.html', context={'title': f"Тег: {tag.tag}", 'menu': menu,
-                                                        'posts': posts, 'cat_selected': None, })
+    def get_queryset(self):
+        return Sitedog.published.filter(cat__slug=self.kwargs['cat_slug']).select_related("cat")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat = context['posts'][0].cat
+        context['title'] = 'Категория - ' + cat.name
+        context['menu'] = menu
+        context['cat_selected'] = cat.pk
+        return context
+
+
+class TagsPost(ListView):
+    template_name = 'sitedog/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
+
+    def get_queryset(self):
+        return Sitedog.published.filter(tags__slug=self.kwargs['tag_slug']).select_related("cat")
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag = TagPost.objects.get(slug=self.kwargs['tag_slug'])
+        context['title'] = 'Тег - ' + tag.tag
+        context['menu'] = menu
+        context['cat_selected'] = None
+        return context
 
 
 def page_not_found(request, exception):
