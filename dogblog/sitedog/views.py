@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound
 from dogblog.sitedog.models import Sitedog, Category, TagPost, UploadFiles
 from .forms import AddPostForm, UploadFileForm
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, FormView
+from django.urls import reverse_lazy
 
 
 menu = [
@@ -50,16 +51,15 @@ class ShowPost(DetailView):
         return get_object_or_404(Sitedog.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
-def addpage(request):
-    if request.method == 'POST':
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('index')
-    else:
-        form = AddPostForm()
-    return render(request, 'sitedog/addpage.html', context={'menu': menu, 'title': 'Добавление статьи',
-                                                            'form': form, })
+class AddPage(FormView):
+    form_class = AddPostForm
+    template_name = 'sitedog/addpage.html'
+    success_url = reverse_lazy('index')
+    extra_context = {'menu': menu, 'title': 'Добавление статьи', }
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 def contact(request):

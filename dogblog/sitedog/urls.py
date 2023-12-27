@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path('', views.SitedogIndex.as_view(), name='index'),
     path('about/', views.about, name='about'),
-    path('addpage/', views.addpage, name='add_page'),
+    path('addpage/', views.AddPage.as_view(), name='add_page'),
     path('contact/', views.contact, name='contact'),
     path('login/', views.login, name='login'),
     path('post/<slug:post_slug>/', views.ShowPost.as_view(), name='post'),
