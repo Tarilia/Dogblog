@@ -5,7 +5,7 @@ from .forms import AddPostForm, UploadFileForm
 from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from .utils import DataMixin
-
+from django.core.paginator import Paginator
 
 menu = [
         {'title': "О сайте", 'url_name': 'about'},
@@ -26,15 +26,12 @@ class SitedogIndex(DataMixin, ListView):
 
 
 def about(request):
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            fp = UploadFiles(file=form.cleaned_data['file'])
-            fp.save()
-    else:
-        form = UploadFileForm()
+    contact_list = Sitedog.published.all()
+    paginator = Paginator(contact_list, 3)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, 'sitedog/about.html',
-                  {'title': 'О сайте', 'menu': menu, 'form': form})
+                  {'title': 'О сайте', 'page_obj': page_obj})
 
 
 class ShowPost(DataMixin, DetailView):
