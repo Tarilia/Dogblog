@@ -4,6 +4,7 @@ from dogblog.sitedog.models import Sitedog, Category, TagPost, UploadFiles
 from .forms import AddPostForm, UploadFileForm
 from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView
 from django.urls import reverse_lazy
+from .utils import DataMixin
 
 
 menu = [
@@ -14,11 +15,11 @@ menu = [
 ]
 
 
-class SitedogIndex(ListView):
+class SitedogIndex(DataMixin, ListView):
     template_name = 'sitedog/index.html'
     context_object_name = 'posts'
-    extra_context = {'title': 'Главная страница',
-                     'menu': menu, 'cat_selected': 0, }
+    title_page = 'Главная страница'
+    cat_selected = 0
 
     def get_queryset(self):
         return Sitedog.published.all().select_related('cat')
@@ -36,33 +37,31 @@ def about(request):
                   {'title': 'О сайте', 'menu': menu, 'form': form})
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     template_name = 'sitedog/post.html'
     slug_url_kwarg = 'post_slug'
     context_object_name = 'post'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['post'].title
-        context['menu'] = menu
-        return context
+        return self.get_mixin_context(context, title=context['post'].title)
 
     def get_object(self, queryset=None):
         return get_object_or_404(Sitedog.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
-class AddPage(CreateView):
+class AddPage(DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'sitedog/addpage.html'
-    extra_context = {'menu': menu, 'title': 'Добавление статьи', }
+    title_page = 'Добавление статьи'
 
 
-class UpdatePage(UpdateView):
+class UpdatePage(DataMixin, UpdateView):
     model = Sitedog
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'sitedog/addpage.html'
     success_url = reverse_lazy('index')
-    extra_context = {'menu': menu, 'title': 'Редактирование статьи', }
+    title_page = 'Редактирование статьи'
 
 
 def contact(request):
@@ -73,7 +72,7 @@ def login(request):
     return HttpResponse(f'Авторизация')
 
 
-class SitedogCategory(ListView):
+class SitedogCategory(DataMixin, ListView):
     template_name = 'sitedog/index.html'
     context_object_name = 'posts'
     allow_empty = False
@@ -84,13 +83,11 @@ class SitedogCategory(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cat = context['posts'][0].cat
-        context['title'] = 'Категория - ' + cat.name
-        context['menu'] = menu
-        context['cat_selected'] = cat.pk
-        return context
+        return self.get_mixin_context(context, title='Категория - ' + cat.name,
+                                      cat_selected=cat.pk, )
 
 
-class TagsPost(ListView):
+class TagsPost(DataMixin, ListView):
     template_name = 'sitedog/index.html'
     context_object_name = 'posts'
     allow_empty = False
@@ -101,10 +98,7 @@ class TagsPost(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         tag = TagPost.objects.get(slug=self.kwargs['tag_slug'])
-        context['title'] = 'Тег - ' + tag.tag
-        context['menu'] = menu
-        context['cat_selected'] = None
-        return context
+        return self.get_mixin_context(context, title='Тег: ' + tag.tag)
 
 
 def page_not_found(request, exception):
