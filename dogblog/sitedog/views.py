@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound
 from dogblog.sitedog.models import Sitedog, Category, TagPost, UploadFiles
 from .forms import AddPostForm, UploadFileForm
-from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView
+from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView
 from django.urls import reverse_lazy
 
 
@@ -55,6 +55,14 @@ class AddPage(CreateView):
     form_class = AddPostForm
     template_name = 'sitedog/addpage.html'
     extra_context = {'menu': menu, 'title': 'Добавление статьи', }
+
+
+class UpdatePage(UpdateView):
+    model = Sitedog
+    fields = ['title', 'content', 'photo', 'is_published', 'cat']
+    template_name = 'sitedog/addpage.html'
+    success_url = reverse_lazy('index')
+    extra_context = {'menu': menu, 'title': 'Редактирование статьи', }
 
 
 def contact(request):
