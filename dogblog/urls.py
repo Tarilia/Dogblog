@@ -7,6 +7,7 @@ from dogblog.sitedog.views import page_not_found
 
 urlpatterns = [
     path('', include('dogblog.sitedog.urls')),
+    path('users/', include('users.urls', namespace="users")),
     path('admin/', admin.site.urls),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
