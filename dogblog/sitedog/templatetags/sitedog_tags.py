@@ -1,9 +1,15 @@
 from django import template
 from dogblog.sitedog.models import Category, TagPost
 from django.db.models import Count
+from dogblog.sitedog.utils import menu
 
 
 register = template.Library()
+
+
+@register.simple_tag
+def get_menu():
+    return menu
 
 
 @register.inclusion_tag('sitedog/list_categories.html')
