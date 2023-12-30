@@ -7,13 +7,6 @@ from django.urls import reverse_lazy
 from .utils import DataMixin
 from django.core.paginator import Paginator
 
-menu = [
-        {'title': "О сайте", 'url_name': 'about'},
-        {'title': "Добавить статью", 'url_name': 'add_page'},
-        {'title': "Обратная связь", 'url_name': 'contact'},
-        {'title': "Войти", 'url_name': 'login'},
-]
-
 
 class SitedogIndex(DataMixin, ListView):
     template_name = 'sitedog/index.html'
