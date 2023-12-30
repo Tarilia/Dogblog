@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MinLengthValidator, MaxLengthValidator
@@ -36,6 +37,8 @@ class Sitedog(models.Model):
                                        default=Status.DRAFT, verbose_name="Статус")
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name="Категории")
     tags = models.ManyToManyField('TagPost', blank=True, related_name='tags', verbose_name="Теги")
+    author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, related_name='posts', null=True,
+                               default=None)
 
     objects = models.Manager()
     published = PublishedManager()
