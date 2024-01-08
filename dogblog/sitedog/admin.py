@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from .models import Sitedog, Category
+from .models import Sitedog, Category, TagPost
 from django.utils.safestring import mark_safe
 
 
@@ -42,3 +42,9 @@ class SitedogAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     list_display_links = ('id', 'name')
+
+
+@admin.register(TagPost)
+class TagPostAdmin(admin.ModelAdmin):
+    list_display = ('id', 'tag')
+    list_display_links = ('id', 'tag')
