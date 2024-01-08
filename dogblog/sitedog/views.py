@@ -1,10 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
-from dogblog.sitedog.models import Sitedog, Category, TagPost, UploadFiles
-from .forms import AddPostForm, UploadFileForm
-from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView
+from dogblog.sitedog.models import Sitedog, TagPost
+from .forms import AddPostForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from .utils import DataMixin
 from django.core.paginator import Paginator
@@ -64,9 +64,9 @@ class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
     permission_required = 'sitedog.change_sitedog'
 
 
-@permission_required(perm='sitedog.add_sitedog', raise_exception=True)
+# @permission_required(perm='sitedog.add_sitedog', raise_exception=True)
 def contact(request):
-    return HttpResponse(f'Обратная связь')
+    return HttpResponse(f'Наши контакты: ')
 
 
 def login(request):
