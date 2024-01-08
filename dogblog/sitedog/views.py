@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound
@@ -43,10 +43,11 @@ class ShowPost(DataMixin, DetailView):
         return get_object_or_404(Sitedog.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
-class AddPage(LoginRequiredMixin, DataMixin, CreateView):
+class AddPage(PermissionRequiredMixin, LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'sitedog/addpage.html'
     title_page = 'Добавление статьи'
+    permission_required = 'sitedog.add_sitedog'
 
     def form_valid(self, form):
         w = form.save(commit=False)
@@ -54,12 +55,13 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
         return super().form_valid(form)
 
 
-class UpdatePage(DataMixin, UpdateView):
+class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
     model = Sitedog
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'sitedog/addpage.html'
     success_url = reverse_lazy('index')
     title_page = 'Редактирование статьи'
+    permission_required = 'sitedog.change_sitedog'
 
 
 def contact(request):
