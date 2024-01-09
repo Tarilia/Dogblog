@@ -1,8 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponseNotFound
 from dogblog.sitedog.models import Sitedog, TagPost
+from django.views import View
 from .forms import AddPostForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
@@ -20,14 +20,8 @@ class SitedogIndex(DataMixin, ListView):
         return Sitedog.published.all().select_related('cat')
 
 
-@login_required
 def about(request):
-    contact_list = Sitedog.published.all()
-    paginator = Paginator(contact_list, 3)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'sitedog/about.html',
-                  {'title': 'О сайте', 'page_obj': page_obj})
+    return render(request, 'sitedog/about.html', {'title': 'О сайте'})
 
 
 class ShowPost(DataMixin, DetailView):
@@ -64,9 +58,8 @@ class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
     permission_required = 'sitedog.change_sitedog'
 
 
-# @permission_required(perm='sitedog.add_sitedog', raise_exception=True)
 def contact(request):
-    return HttpResponse(f'Наши контакты: ')
+    return render(request, 'sitedog/contact.html', {'title': 'Обратная связь'})
 
 
 def login(request):
@@ -100,6 +93,16 @@ class TagsPost(DataMixin, ListView):
         context = super().get_context_data(**kwargs)
         tag = TagPost.objects.get(slug=self.kwargs['tag_slug'])
         return self.get_mixin_context(context, title='Тег: ' + tag.tag)
+
+
+class ArticleFormDeleteView(View):
+
+    def post(self, request, *args, **kwargs):
+        post_slug = kwargs.get('slug')
+        post = Sitedog.objects.get(id=post_slug)
+        if post:
+            post.delete()
+        return redirect('index')
 
 
 def page_not_found(request, exception):

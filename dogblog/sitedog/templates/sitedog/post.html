@@ -23,7 +23,14 @@
 
 {{ post.content|linebreaks }}
 
-{% if perms.women.change_women %}
+{% if perms.sitedog.change_sitedog %}
 <p><a href="{% url 'edit_page' post.slug %}">Редактировать</a></p>
+{% endif %}
+
+{% if perms.sitedog.change_sitedog %}
+<form action="{% url 'post_delete' post.slug %}" method="post">
+      {% csrf_token %}
+      <input type="submit" value="Удалить">
+</form>
 {% endif %}
 {% endblock %}
